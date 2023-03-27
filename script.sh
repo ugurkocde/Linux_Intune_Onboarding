@@ -2,13 +2,13 @@
 
 # Define menu options
 OPTIONS=(1 "Change Devicename"
-         2 "Microsoft Intune - Onboarding"
+         2 "Install Microsoft Intune"
          3 "Update and Upgrade System"
          4 "Display System Information"
          5 "Exit")
 
 # Show menu and get selection
-CHOICE=$(whiptail --title "Linux2Intune Onboarding" --menu "Select an option:" 12 50 5 "${OPTIONS[@]}" 3>&1 1>&2 2>&3)
+CHOICE=$(whiptail --title "Select an option" --menu "Choose an option:" 12 50 5 "${OPTIONS[@]}" 3>&1 1>&2 2>&3)
 
 # Perform action based on selection
 case $CHOICE in
