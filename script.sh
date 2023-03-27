@@ -40,50 +40,7 @@ case $CHOICE in
     sleep 5
     sudo reboot
     ;;
- 2)
-    # Onboard Microsoft Defender for Endpoint
-    echo "Starting onboarding of Microsoft Defender for Endpoint..."
-
-    # Install curl and libplist-utils
-    echo "Installing dependencies..."
-    sudo apt-get install curl libplist-utils -y
-
-    # Identify system information
-    DISTRO=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
-    VERSION=$(lsb_release -rs | cut -f1 -d'.')
-
-    # Download and install the Microsoft repository configuration
-    echo "Adding Microsoft repository configuration..."
-    curl -o microsoft.list https://packages.microsoft.com/config/$DISTRO/$VERSION/prod.list
-    sudo mv ./microsoft.list /etc/apt/sources.list.d/microsoft-prod.list
-
-    # Install the GPG package and the Microsoft GPG public key
-    echo "Installing GPG and adding Microsoft GPG public key..."
-    sudo apt-get install gpg -y
-    curl -sSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
-
-    # Install the HTTPS driver
-    echo "Installing HTTPS driver..."
-    sudo apt-get install apt-transport-https -y
-
-    # Update the repository metadata
-    echo "Updating package repositories..."
-    sudo apt-get update
-
-    # Install Microsoft Defender for Endpoint
-    echo "Installing Microsoft Defender for Endpoint..."
-    sudo apt-get install mdatp -y
-
-    # Verify that the service is running
-    echo "Verifying that the service is running..."
-    sudo systemctl status mdatp.service
-
-    # Print message to indicate onboarding is complete
-    echo "Onboarding of Microsoft Defender for Endpoint is complete. Please verify that the Microsoft Defender for Endpoint service is running."
-;;
-
-
-  3)
+  2)
     # Update and upgrade system
     echo "Updating package repositories..."
     sudo apt update
@@ -91,7 +48,7 @@ case $CHOICE in
     sudo apt upgrade -y
     echo "System update and upgrade complete."
     ;;
-  4)
+  3)
     # Display system information
     echo "Displaying system information..."
     echo "CPU information:"
@@ -101,7 +58,7 @@ case $CHOICE in
     echo "Storage information:"
     df -h
     ;;
-  5)
+  4)
     # Exit menu
     echo "Exiting menu..."
     ;;
