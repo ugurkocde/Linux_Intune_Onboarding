@@ -124,11 +124,11 @@ case $CHOICE in
     ;;
 3)
     # Update and upgrade system
-    echo -e "\e[31mUpdating package repositories... \e[0m"
+    echo -e "\e[32m Updating package repositories... \e[0m"
     sudo apt update
-    echo "Upgrading packages..."
+    echo -e "\e[32m Upgrading packages...... \e[0m"
     sudo apt upgrade -y
-    echo "System update and upgrade complete."
+    echo -e "\e[32m System update and upgrade complete. \e[0m"
     ;;
 4)
     # Display system information
