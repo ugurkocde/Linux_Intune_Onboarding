@@ -119,7 +119,7 @@ case $CHOICE in
     ;;
 3)
     # Update and upgrade system
-    echo -e "\e[31m Updating package repositories... \e[0m"
+    echo -e "\e[31mUpdating package repositories... \e[0m"
     sudo apt update
     echo "Upgrading packages..."
     sudo apt upgrade -y
