@@ -7,7 +7,7 @@ OPTIONS=(1 "Microsoft Intune - Onboarding"
          4 "Exit")
 
 # Show menu and get selection
-CHOICE=$(whiptail --title "Linux2Intune" --menu "Choose an option:" 12 50 4 "${OPTIONS[@]}" --no-button 3>&1 1>&2 2>&3)
+CHOICE=$(whiptail --title "Linux2Intune" --menu "Choose an option:" 12 50 4 "${OPTIONS[@]}"  3>&1 1>&2 2>&3)
 
 # Perform action based on selection
 case $CHOICE in
