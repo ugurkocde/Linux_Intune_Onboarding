@@ -8,7 +8,7 @@ OPTIONS=(1 "Change Devicename"
          5 "Exit")
 
 # Show menu and get selection
-CHOICE=$(whiptail --title "Select an option" --menu "Choose an option:" 12 50 5 "${OPTIONS[@]}" 3>&1 1>&2 2>&3)
+CHOICE=$(whiptail --title "Linux2Intune" --msgbox "Choose an option:" 10 50 --ok-button "OK" "${OPTIONS[@]}" 3>&1 1>&2 2>&3)
 
 # Perform action based on selection
 case $CHOICE in
