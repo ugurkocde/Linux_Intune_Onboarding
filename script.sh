@@ -94,6 +94,7 @@ case $CHOICE in
     echo "Starting onboarding of Microsoft Defender for Endpoint..."
 
     # Install curl and libplist-utils
+    echo " "
     echo "Installing dependencies..."
     sudo apt-get install curl libplist-utils -y
 
@@ -102,11 +103,13 @@ case $CHOICE in
     VERSION=$(lsb_release -rs | cut -f1 -d'.')
 
     # Download and install the Microsoft repository configuration
+    echo " "
     echo "Adding Microsoft repository configuration..."
     curl -o microsoft.list https://packages.microsoft.com/config/$DISTRO/$VERSION/prod.list
     sudo mv ./microsoft.list /etc/apt/sources.list.d/microsoft-prod.list
 
     # Install the GPG package and the Microsoft GPG public key
+    echo " "
     echo "Installing GPG and adding Microsoft GPG public key..."
     sudo apt-get install gpg -y
     curl -sSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg >/dev/null
@@ -136,8 +139,10 @@ case $CHOICE in
     # Update and upgrade system
     echo -e "\e[32mUpdating package repositories... \e[0m"
     sudo apt update
+        echo " "
     echo -e "\e[32mUpgrading packages...... \e[0m"
     sudo apt upgrade -y
+        echo " "
     echo -e "\e[32mSystem update and upgrade complete. \e[0m"
     echo -e "\e[33mGoing back to the menu ... \e[0m"
     sleep 5
