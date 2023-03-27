@@ -71,6 +71,7 @@ case $CHOICE in
     3)
         # Back to main menu
         echo "Exiting menu..."
+        $CHOICE
         ;;
     esac
     ;;
@@ -118,7 +119,7 @@ case $CHOICE in
     ;;
 3)
     # Update and upgrade system
-    echo "Updating package repositories..."
+    echo -e "\e[31mUpdating package repositories...\e[0m"
     sudo apt update
     echo "Upgrading packages..."
     sudo apt upgrade -y
