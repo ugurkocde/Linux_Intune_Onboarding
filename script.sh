@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Set initial value of menu loop variable
+MENU_LOOP=true
+
+while $MENU_LOOP; do
+
 # Define menu options
 OPTIONS=(1 "Microsoft Intune"
     2 "Defender for Endpoint - Onboarding"
@@ -140,3 +145,5 @@ case $CHOICE in
     echo "Exiting menu..."
     ;;
 esac
+
+done
