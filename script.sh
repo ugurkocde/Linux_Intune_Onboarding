@@ -1,17 +1,25 @@
 #!/bin/bash
 
 # Define menu options
-OPTIONS=(1 "Install Microsoft Intune"
-         2 "Update and Upgrade System"
-         3 "Display System Information"
-         4 "Exit")
+OPTIONS=(1 "Change Devicename"
+         2 "Install Microsoft Intune"
+         3 "Update and Upgrade System"
+         4 "Display System Information"
+         5 "Exit")
 
 # Show menu and get selection
-CHOICE=$(whiptail --title "Linux2Intune" --menu "Choose an option:" 12 50 4 "${OPTIONS[@]}" --no-button 3>&1 1>&2 2>&3)
+CHOICE=$(whiptail --title "Linux2Intune" --menu "Choose an option:" 12 50 5 "${OPTIONS[@]}" --no-button 3>&1 1>&2 2>&3)
 
 # Perform action based on selection
 case $CHOICE in
   1)
+    # Change device name
+    echo "Enter a new device name:"
+    read NEWNAME
+    sudo hostnamectl set-hostname $NEWNAME
+    echo "Device name changed to $NEWNAME."
+    ;;
+  2)
     # Install Microsoft Intune
     echo "Starting installation of Microsoft Intune..."
 
@@ -40,7 +48,7 @@ case $CHOICE in
     sleep 5
     sudo reboot
     ;;
-  2)
+  3)
     # Update and upgrade system
     echo "Updating package repositories..."
     sudo apt update
@@ -48,7 +56,7 @@ case $CHOICE in
     sudo apt upgrade -y
     echo "System update and upgrade complete."
     ;;
-  3)
+  4)
     # Display system information
     echo "Displaying system information..."
     echo "CPU information:"
@@ -58,7 +66,7 @@ case $CHOICE in
     echo "Storage information:"
     df -h
     ;;
-  4)
+  5)
     # Exit menu
     echo "Exiting menu..."
     ;;
