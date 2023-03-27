@@ -13,8 +13,14 @@ OPTIONS=(1 "Microsoft Intune"
     5 "Exit")
 
 # Show menu and get selection
-CHOICE=$(whiptail --title "Linux2Intune" --menu "Select an option:" $((LINES*50/100)) $((COLUMNS*50/100)) 4 "${OPTIONS[@]}" 3>&1 1>&2 2>&3)
+CHOICE=$(whiptail --title "Linux2Intune" --menu "Select an option:" $((LINES*50/100)) $((COLUMNS*50/100)) 4 "${OPTIONS[@]}" --cancel-button "Exit" 3>&1 1>&2 2>&3)
 
+# Exit menu if user cancels
+if [[ $? -ne 0 ]]; then
+  echo "Exiting menu..."
+  MENU_LOOP=false
+  break
+fi
 
 # Perform action based on selection
 case $CHOICE in
@@ -26,7 +32,7 @@ case $CHOICE in
         3 "Back to Main Menu")
 
     # Show menu and get selection
-    INTUNE_CHOICE=$(whiptail --title "Microsoft Intune - Onboarding" --menu "Select an option:" $((LINES*50/100)) $((COLUMNS*50/100)) 4 "${INTUNE_OPTIONS[@]}" 3>&1 1>&2 2>&3)
+    INTUNE_CHOICE=$(whiptail --title "Microsoft Intune" --menu "Select an option:" $((LINES*50/100)) $((COLUMNS*50/100)) 4 "${INTUNE_OPTIONS[@]}" 3>&1 1>&2 2>&3)
 
     # Perform action based on selection
     case $INTUNE_CHOICE in
@@ -73,7 +79,7 @@ case $CHOICE in
         sudo rm -rf /usr/share/doc/intune-portal
 
         echo "Intune app and local registration data have been removed."
-        echo "Going back to the menu ..."
+        echo -e "\e[33mGoing back to the menu ... \e[0m"
         sleep 5
         ;;
     3)
@@ -123,7 +129,7 @@ case $CHOICE in
 
     # Print message to indicate onboarding is complete
     echo "Onboarding of Microsoft Defender for Endpoint is complete. Please verify that the Microsoft Defender for Endpoint service is running."
-    echo "Going back to the menu ..."
+    echo -e "\e[33mGoing back to the menu ... \e[0m"
     sleep 5
     ;;
 3)
@@ -133,7 +139,7 @@ case $CHOICE in
     echo -e "\e[32mUpgrading packages...... \e[0m"
     sudo apt upgrade -y
     echo -e "\e[32mSystem update and upgrade complete. \e[0m"
-    echo "Going back to the menu ..."
+    echo -e "\e[33mGoing back to the menu ... \e[0m"
     sleep 5
     ;;
 4)
