@@ -26,7 +26,7 @@ case $CHOICE in
         3 "Back to Main Menu")
 
     # Show menu and get selection
-    INTUNE_CHOICE=$(whiptail --title "Microsoft Intune - Onboarding" --menu "Select an option:" 12 50 2 "${INTUNE_OPTIONS[@]}" 3>&1 1>&2 2>&3)
+    INTUNE_CHOICE=$(whiptail --title "Microsoft Intune - Onboarding" --menu "Select an option:" $((LINES*70/100)) $((COLUMNS*80/100)) 4 "${INTUNE_OPTIONS[@]}" 3>&1 1>&2 2>&3)
 
     # Perform action based on selection
     case $INTUNE_CHOICE in
