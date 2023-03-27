@@ -72,11 +72,11 @@ case $CHOICE in
         sudo rm -rf /usr/share/doc/intune-portal
 
         echo "Intune app and local registration data have been removed."
+        sleep 5
         ;;
     3)
         # Back to main menu
         echo "Exiting menu..."
-        $CHOICE
         ;;
     esac
     ;;
@@ -121,6 +121,7 @@ case $CHOICE in
 
     # Print message to indicate onboarding is complete
     echo "Onboarding of Microsoft Defender for Endpoint is complete. Please verify that the Microsoft Defender for Endpoint service is running."
+    sleep 5
     ;;
 3)
     # Update and upgrade system
@@ -129,6 +130,7 @@ case $CHOICE in
     echo -e "\e[32mUpgrading packages...... \e[0m"
     sudo apt upgrade -y
     echo -e "\e[32mSystem update and upgrade complete. \e[0m"
+    sleep 5
     ;;
 4)
     # Display system information
