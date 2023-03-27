@@ -55,7 +55,7 @@ case $CHOICE in
         ;;
     2)
         # Intune Offboarding
-        echo "Uninstalling Intune app..."
+        echo -e "\e[31mUninstalling Intune app...\e[0m"
         sudo apt remove intune-portal -y
         sudo apt purge intune-portal -y
 
