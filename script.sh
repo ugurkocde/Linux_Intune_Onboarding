@@ -2,7 +2,7 @@
 
 # Define menu options
 OPTIONS=(1 "Change Devicename"
-         2 "Install Microsoft Intune"
+         2 "Microsoft Intune - Onboarding"
          3 "Update and Upgrade System"
          4 "Display System Information"
          5 "Exit")
