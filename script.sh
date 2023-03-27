@@ -91,11 +91,11 @@ case $CHOICE in
 
 2)
     # Onboard Microsoft Defender for Endpoint
-    echo "Starting onboarding of Microsoft Defender for Endpoint..."
+    echo -e "\e[32mStarting onboarding of Microsoft Defender for Endpoint... \e[0m"
 
     # Install curl and libplist-utils
-    echo " "
-    echo "Installing dependencies..."
+    echo ""
+    echo -e "\e[32mInstalling dependencies... \e[0m"
     sudo apt-get install curl libplist-utils -y
 
     # Identify system information
@@ -104,34 +104,39 @@ case $CHOICE in
 
     # Download and install the Microsoft repository configuration
     echo " "
-    echo "Adding Microsoft repository configuration..."
+    echo -e "\e[32mAdding Microsoft repository configuration... \e[0m"
     curl -o microsoft.list https://packages.microsoft.com/config/$DISTRO/$VERSION/prod.list
     sudo mv ./microsoft.list /etc/apt/sources.list.d/microsoft-prod.list
 
     # Install the GPG package and the Microsoft GPG public key
     echo " "
-    echo "Installing GPG and adding Microsoft GPG public key..."
+    echo -e "\e[32mInstalling GPG and adding Microsoft GPG public key... \e[0m"
     sudo apt-get install gpg -y
     curl -sSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg >/dev/null
 
     # Install the HTTPS driver
-    echo "Installing HTTPS driver..."
+    echo ""
+    echo -e "\e[32mInstalling HTTPS driver... \e[0m"
     sudo apt-get install apt-transport-https -y
 
     # Update the repository metadata
-    echo "Updating package repositories..."
+    echo ""
+    echo -e "\e[32mUpdating package repositories... \e[0m"
     sudo apt-get update
 
     # Install Microsoft Defender for Endpoint
-    echo "Installing Microsoft Defender for Endpoint..."
+    echo ""
+    echo -e "\e[32mInstalling Microsoft Defender for Endpoint... \e[0m"
     sudo apt-get install mdatp -y
 
     # Verify that the service is running
-    echo "Verifying that the service is running..."
+    echo ""
+    echo -e "\e[32mVerifying that the service is running... \e[0m"
     sudo systemctl status mdatp.service
 
     # Print message to indicate onboarding is complete
-    echo "Onboarding of Microsoft Defender for Endpoint is complete. Please verify that the Microsoft Defender for Endpoint service is running."
+    echo -e "\e[32mOnboarding of Microsoft Defender for Endpoint is complete. Please verify that the Microsoft Defender for Endpoint service is running. \e[0m"
+    echo ""
     echo -e "\e[33mGoing back to the menu ... \e[0m"
     sleep 5
     ;;
@@ -145,7 +150,7 @@ case $CHOICE in
         echo " "
     echo -e "\e[32mSystem update and upgrade complete. \e[0m"
     echo -e "\e[33mGoing back to the menu ... \e[0m"
-    sleep 5
+    sleep 2
     ;;
 4)
     # Display system information
