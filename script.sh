@@ -26,7 +26,6 @@ CHOICE=$(zenity --list --title="Linux2Intune " --text "Select an option:" --colu
         "1" "Microsoft Intune" \
         "2" "Update and Upgrade System" \
         "3" "Display System Information" \
-        "4" "Exit")
 
 # Exit menu if user cancels
 if [[ $? -ne 0 ]]; then
@@ -48,7 +47,7 @@ case $CHOICE in
     case $INTUNE_CHOICE in
     "1")
         # Install Microsoft Intune
-        echo "Starting installation of Microsoft Intune..."
+        echo "\e[31mStarting installation of Microsoft Intune...\e[0m"
 
         # Install curl and GPG
         echo "Installing dependencies..."
@@ -71,7 +70,7 @@ case $CHOICE in
 
         # Check if Microsoft Intune app has been installed
         if dpkg -s intune-portal &> /dev/null; then
-            echo "Microsoft Intune installed successfully."
+            echo "\033[32mMicrosoft Intune installed successfully.\033[0m"
             # Reboot the device
             echo "Installation complete. A reboot is required to complete the installation."
             echo "The device will automatically reboot in 5 seconds."
@@ -100,7 +99,7 @@ case $CHOICE in
         sudo rm /etc/apt/sources.list.d/microsoft-ubuntu-$UBUNTU_CODENAME-prod.list
         sudo rm /usr/share/keyrings/microsoft.gpg
 
-        echo "Intune app and local registration data have been removed."
+        echo -e "\033[32mIntune app and local registration data have been removed.\033[0m"
         echo -e "\e[33mGoing back to the menu ... \e[0m"
         sleep 5
         ;;
@@ -131,8 +130,7 @@ case $CHOICE in
     STORAGE_INFO=$(df -h)
 
     # Show information in Zenity dialog
-    zenity --text-info --width=500 --height=400 --title="System Information" --text="
-    Displaying system information...
+    zenity --text-info --width=500 --height=400 --title="System Information" --text="Displaying system information...
 
     CPU information:
     $CPU_INFO
@@ -141,14 +139,8 @@ case $CHOICE in
     $MEM_INFO
 
     Storage information:
-    $STORAGE_INFO
-    "
-    ;;
-"4")
-    # Exit menu
-    echo "Exiting menu..."
-    MENU_LOOP=false
-    break
+    $STORAGE_INFO"
+
     ;;
 esac
 
