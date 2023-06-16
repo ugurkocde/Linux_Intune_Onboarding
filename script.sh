@@ -23,8 +23,13 @@ OPTIONS=(1 "Microsoft Intune"
     5 "Exit")
 
 # Show menu and get selection
-CHOICE=$(whiptail --title "Linux2Intune" --menu "Select an option:" $((LINES*50/100)) $((COLUMNS*50/100)) 4 "${OPTIONS[@]}" --cancel-button "Exit" 3>&1 1>&2 2>&3)
-
+CHOICE=$(zenity --list --title="Linux2Intune" --text "Select an option:" --column "Options" \
+        "Microsoft Intune" \
+        "Defender for Endpoint - Onboarding" \
+        "Update and Upgrade System" \
+        "Display System Information" \
+        "Exit")
+        
 # Exit menu if user cancels
 if [[ $? -ne 0 ]]; then
   echo "Exiting menu..."
