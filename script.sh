@@ -39,7 +39,7 @@ case $CHOICE in
 "1")
     # Show Microsoft Intune menu options
     INTUNE_CHOICE=$(zenity --list --title="Microsoft Intune" --text "Select an option:" --column "Options" --column "Menu" \
-        "1" "Intune - Onboarding (Reboot required)" \
+        "1" "Intune - Onboarding" \
         "2" "Intune - Offboarding" \
         "3" "Intune - Update App" \
         "4" "Back to Main Menu")
@@ -73,14 +73,14 @@ case $CHOICE in
         if dpkg -s intune-portal &> /dev/null; then
             echo "\033[32mMicrosoft Intune installed successfully.\033[0m"
             # Reboot the device
-            echo "Installation complete. A reboot is required to complete the installation."
-            echo "The device will automatically reboot in 5 seconds."
-            sleep 5
-            sudo reboot
+            echo "Installation complete. Starting Application now."
+            intune-portal
         else
             echo "Microsoft Intune installation failed."
         fi
         ;;
+
+
 
     "2")
         # Intune Offboarding
@@ -120,10 +120,10 @@ case $CHOICE in
                 sudo apt install intune-portal -y
                 echo -e "\e[32mIntune app has been updated.\e[0m"
             else
-                echo "Intune app is up-to-date."
+                echo "\e[32mIntune app is up-to-date. \e[0m"
             fi
         else
-            echo "Intune app is not installed."
+            echo "\e[33mIntune app is not installed.\e[0m"
         fi
         echo -e "\e[33mGoing back to the menu ... \e[0m"
         sleep 2
