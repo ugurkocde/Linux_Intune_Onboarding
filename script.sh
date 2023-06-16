@@ -25,7 +25,8 @@ while $MENU_LOOP; do
 CHOICE=$(zenity --list --title="Linux2Intune " --text "Select an option:" --column "Options" --column "Menu" \
         "1" "Microsoft Intune" \
         "2" "Update and Upgrade System" \
-        "3" "Display System Information" \
+        "3" "Display System Information")
+
 
 # Exit menu if user cancels
 if [[ $? -ne 0 ]]; then
