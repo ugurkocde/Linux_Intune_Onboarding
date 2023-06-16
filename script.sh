@@ -11,6 +11,7 @@
 UBUNTU_VERSION=$(lsb_release -rs)
 UBUNTU_CODENAME=$(lsb_release -cs)
 UBUNTU_DISTRO=$(lsb_release -is) # Clearly, this is Ubuntu :)
+DEFENDER_CHANNEL="prod"
 
 # Verify if Ubuntu version is either 20.04 or 22.04
 if [[ "$UBUNTU_VERSION" != "20.04" ]] && [[ "$UBUNTU_VERSION" != "22.04" ]]; then
@@ -106,6 +107,12 @@ case $CHOICE in
     # Onboard Microsoft Defender for Endpoint
     echo -e "\e[32mStarting onboarding of Microsoft Defender for Endpoint... \e[0m"
 
+    # Show Defender for Endpoint settings
+    eche -e "\e[32mSettings: \e[0m"
+    echo "Distro: $UBUNTU_DISTRO"
+    echo "$UBUNTU_DISTRO Version: $UBUNTU_VERSION"
+    echo "Defender Channel: $DEFENDER_CHANNEL"
+
     # Install curl and libplist-utils
     echo ""
     echo -e "\e[32mInstalling dependencies... \e[0m"
@@ -114,7 +121,7 @@ case $CHOICE in
     # Download and install the Microsoft repository configuration
     echo " "
     echo -e "\e[32mAdding Microsoft repository configuration... \e[0m"
-    curl -o microsoft.list https://packages.microsoft.com/config/$UBUNTU_DISTRO/$UBUNTU_VERSION/prod.list
+    curl -o microsoft.list https://packages.microsoft.com/config/$UBUNTU_DISTRO/$UBUNTU_VERSION/$DEFENDER_CHANNEL.list
     sudo mv ./microsoft.list /etc/apt/sources.list.d/microsoft-prod.list
 
     # Install the GPG package and the Microsoft GPG public key
