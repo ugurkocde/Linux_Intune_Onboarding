@@ -15,20 +15,13 @@ MENU_LOOP=true
 
 while $MENU_LOOP; do
 
-# Define menu options
-OPTIONS=(1 "Microsoft Intune"
-    2 "Defender for Endpoint - Onboarding"
-    3 "Update and Upgrade System"
-    4 "Display System Information"
-    5 "Exit")
-
 # Show menu and get selection
-CHOICE=$(zenity --list --title="Linux2 Intune" --text "Select an option:" --column "Options" \
-        "Microsoft Intune" \
-        "Defender for Endpoint - Onboarding" \
-        "Update and Upgrade System" \
-        "Display System Information" \
-        "Exit")
+CHOICE=$(zenity --list --title="Linux2 Intune" --text "Select an option:" --column "Options" --column "Menu" \
+        "1" "Microsoft Intune" \
+        "2" "Defender for Endpoint - Onboarding" \
+        "3" "Update and Upgrade System" \
+        "4" "Display System Information" \
+        "5" "Exit")
 
 # Exit menu if user cancels
 if [[ $? -ne 0 ]]; then
@@ -39,19 +32,16 @@ fi
 
 # Perform action based on selection
 case $CHOICE in
-1)
-
+"1")
     # Show Microsoft Intune menu options
-    INTUNE_OPTIONS=(1 "Intune - Onboarding"
-        2 "Intune - Offboarding"
-        3 "Back to Main Menu")
-
-    # Show menu and get selection
-    INTUNE_CHOICE=$(whiptail --title "Microsoft Intune" --menu "Select an option:" $((LINES*50/100)) $((COLUMNS*50/100)) 4 "${INTUNE_OPTIONS[@]}" 3>&1 1>&2 2>&3)
+    INTUNE_CHOICE=$(zenity --list --title="Microsoft Intune" --text "Select an option:" --column "Options" --column "Menu" \
+        "1" "Intune - Onboarding" \
+        "2" "Intune - Offboarding" \
+        "3" "Back to Main Menu")
 
     # Perform action based on selection
     case $INTUNE_CHOICE in
-    1)
+    "1")
         # Install Microsoft Intune
         echo "Starting installation of Microsoft Intune..."
 
@@ -80,7 +70,7 @@ case $CHOICE in
         sleep 5
         sudo reboot
         ;;
-    2)
+    "2")
         # Intune Offboarding
         echo -e "\e[31mUninstalling Intune app...\e[0m"
         sudo apt remove intune-portal -y
@@ -97,14 +87,14 @@ case $CHOICE in
         echo -e "\e[33mGoing back to the menu ... \e[0m"
         sleep 5
         ;;
-    3)
+    "3")
         # Back to main menu
         echo "Exiting menu..."
         ;;
     esac
     ;;
 
-2)
+"2")
     # Onboard Microsoft Defender for Endpoint
     echo -e "\e[32mStarting onboarding of Microsoft Defender for Endpoint... \e[0m"
 
@@ -155,7 +145,7 @@ case $CHOICE in
     echo -e "\e[33mGoing back to the menu ... \e[0m"
     sleep 5
     ;;
-3)
+"3")
     # Update and upgrade system
     echo -e "\e[32mUpdating package repositories... \e[0m"
     sudo apt update
@@ -167,7 +157,7 @@ case $CHOICE in
     echo -e "\e[33mGoing back to the menu ... \e[0m"
     sleep 2
     ;;
-4)
+"4")
     # Display system information
     echo "Displaying system information..."
     echo "CPU information:"
@@ -177,7 +167,7 @@ case $CHOICE in
     echo "Storage information:"
     df -h
     ;;
-5)
+"5")
     # Exit menu
     echo "Exiting menu..."
     MENU_LOOP=false
