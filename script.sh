@@ -84,29 +84,34 @@ case $CHOICE in
 
     "2")
         # Intune Offboarding
-        echo -e "\e[31mUninstalling Intune app...\e[0m"
-        sudo apt remove intune-portal -y
-        sudo apt purge intune-portal -y
+        if dpkg -s intune-portal &> /dev/null; then
+            echo -e "\e[31mUninstalling Intune app...\e[0m"
+            sudo apt remove intune-portal -y
+            sudo apt purge intune-portal -y
 
-        # Remove local registration data
-        echo "Removing local registration data..."
-        sudo rm -rf /var/opt/microsoft/mdm
-        sudo rm -rf /etc/opt/microsoft/mdm
-        sudo rm -rf /usr/share/intune-portal
-        sudo rm -rf /usr/share/doc/intune-portal
+            # Remove local registration data
+            echo "Removing local registration data..."
+            sudo rm -rf /var/opt/microsoft/mdm
+            sudo rm -rf /etc/opt/microsoft/mdm
+            sudo rm -rf /usr/share/intune-portal
+            sudo rm -rf /usr/share/doc/intune-portal
 
-        # Remove Microsoft's sources list and signing key
-        echo "Removing Microsoft's sources list and signing key..."
-        sudo rm /etc/apt/sources.list.d/microsoft-ubuntu-$UBUNTU_CODENAME-prod.list
-        sudo rm /usr/share/keyrings/microsoft.gpg
+            # Remove Microsoft's sources list and signing key
+            echo "Removing Microsoft's sources list and signing key..."
+            sudo rm /etc/apt/sources.list.d/microsoft-ubuntu-$UBUNTU_CODENAME-prod.list
+            sudo rm /usr/share/keyrings/microsoft.gpg
 
-        echo -e "\033[32mIntune app and local registration data have been removed.\033[0m"
+            echo -e "\033[32mIntune app and local registration data have been removed.\033[0m"
+        else
+            echo "Intune app is not installed."
+        fi
         echo -e "\e[33mGoing back to the menu ... \e[0m"
         sleep 5
         ;;
 
-"3")
-    # Intune Update
+
+    "3")
+        # Intune Update
         echo -e "\e[31mChecking for Intune app updates...\e[0m"
         if dpkg -s intune-portal &> /dev/null; then
             sudo apt update
