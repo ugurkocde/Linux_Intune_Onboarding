@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# Get Ubuntu version
+UBUNTU_VERSION=$(lsb_release -rs)
+UBUNTU_CODENAME=$(lsb_release -cs)
+
+# Verify if Ubuntu version is either 20.04 or 22.04
+if [[ "$UBUNTU_VERSION" != "20.04" ]] && [[ "$UBUNTU_VERSION" != "22.04" ]]; then
+    echo "Unsupported Ubuntu version. This script supports Ubuntu 20.04 and 22.04 only."
+    exit 1
+fi
+
 # Set initial value of menu loop variable
 MENU_LOOP=true
 
@@ -48,7 +58,7 @@ case $CHOICE in
         echo "Adding Microsoft package signing key..."
         curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor >microsoft.gpg
         sudo install -o root -g root -m 644 microsoft.gpg /usr/share/keyrings/
-        sudo sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/ubuntu/22.04/prod jammy main" > /etc/apt/sources.list.d/microsoft-ubuntu-jammy-prod.list'
+        sudo sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/ubuntu/'"$UBUNTU_VERSION"'/prod '$UBUNTU_CODENAME' main" > /etc/apt/sources.list.d/microsoft-ubuntu-'$UBUNTU_CODENAME'-prod.list'
         sudo rm microsoft.gpg
 
         # Update package repositories
