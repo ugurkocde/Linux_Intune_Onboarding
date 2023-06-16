@@ -1,17 +1,14 @@
+#!/bin/bash
+
 # Author: Ugur Koc
 # Description: This script is used to install Microsoft Intune and Microsoft Defender for Endpoint on Ubuntu 20.04 and 22.04.
 #             The script is based on the following Microsoft documentation: https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/linux-install-manually?view=o365-worldwide and https://learn.microsoft.com/en-us/mem/intune/user-help/microsoft-intune-app-linux
 #             The script is tested on Ubuntu 20.04 and 22.04.
 #             The script is provided "AS IS" with no warranties.
 
-
-#!/bin/bash
-
 # Get Ubuntu version
 UBUNTU_VERSION=$(lsb_release -rs)
 UBUNTU_CODENAME=$(lsb_release -cs)
-UBUNTU_DISTRO=$(lsb_release -is) # Clearly, this is Ubuntu :)
-DEFENDER_CHANNEL="prod"
 
 # Verify if Ubuntu version is either 20.04 or 22.04
 if [[ "$UBUNTU_VERSION" != "20.04" ]] && [[ "$UBUNTU_VERSION" != "22.04" ]]; then
@@ -25,12 +22,11 @@ MENU_LOOP=true
 while $MENU_LOOP; do
 
 # Show menu and get selection
-CHOICE=$(zenity --list --title="Linux2 Intune" --text "Select an option:" --column "Options" --column "Menu" \
+CHOICE=$(zenity --list --title="Linux2Intune " --text "Select an option:" --column "Options" --column "Menu" \
         "1" "Microsoft Intune" \
-        "2" "Defender for Endpoint - Onboarding" \
-        "3" "Update and Upgrade System" \
-        "4" "Display System Information" \
-        "5" "Exit")
+        "2" "Update and Upgrade System" \
+        "3" "Display System Information" \
+        "4" "Exit")
 
 # Exit menu if user cancels
 if [[ $? -ne 0 ]]; then
@@ -44,7 +40,7 @@ case $CHOICE in
 "1")
     # Show Microsoft Intune menu options
     INTUNE_CHOICE=$(zenity --list --title="Microsoft Intune" --text "Select an option:" --column "Options" --column "Menu" \
-        "1" "Intune - Onboarding" \
+        "1" "Intune - Onboarding (Reboot required)" \
         "2" "Intune - Offboarding" \
         "3" "Back to Main Menu")
 
@@ -73,12 +69,19 @@ case $CHOICE in
         echo "Installing Microsoft Intune..."
         sudo apt install intune-portal -y
 
-        # Reboot the device
-        echo "Installation complete. A reboot is required to complete the installation."
-        echo "The device will automatically reboot in 5 seconds."
-        sleep 5
-        sudo reboot
+        # Check if Microsoft Intune app has been installed
+        if dpkg -s intune-portal &> /dev/null; then
+            echo "Microsoft Intune installed successfully."
+            # Reboot the device
+            echo "Installation complete. A reboot is required to complete the installation."
+            echo "The device will automatically reboot in 5 seconds."
+            sleep 5
+            sudo reboot
+        else
+            echo "Microsoft Intune installation failed."
+        fi
         ;;
+
     "2")
         # Intune Offboarding
         echo -e "\e[31mUninstalling Intune app...\e[0m"
@@ -92,10 +95,16 @@ case $CHOICE in
         sudo rm -rf /usr/share/intune-portal
         sudo rm -rf /usr/share/doc/intune-portal
 
+        # Remove Microsoft's sources list and signing key
+        echo "Removing Microsoft's sources list and signing key..."
+        sudo rm /etc/apt/sources.list.d/microsoft-ubuntu-$UBUNTU_CODENAME-prod.list
+        sudo rm /usr/share/keyrings/microsoft.gpg
+
         echo "Intune app and local registration data have been removed."
         echo -e "\e[33mGoing back to the menu ... \e[0m"
         sleep 5
         ;;
+
     "3")
         # Back to main menu
         echo "Exiting menu..."
@@ -104,62 +113,6 @@ case $CHOICE in
     ;;
 
 "2")
-    # Onboard Microsoft Defender for Endpoint
-    echo -e "\e[32mStarting onboarding of Microsoft Defender for Endpoint... \e[0m"
-
-    # Show Defender for Endpoint settings
-    eche -e "\e[32mSettings: \e[0m"
-    echo "Distro: $UBUNTU_DISTRO"
-    echo "$UBUNTU_DISTRO Version: $UBUNTU_VERSION"
-    echo "Defender Channel: $DEFENDER_CHANNEL"
-
-    # Install curl and libplist-utils
-    echo ""
-    echo -e "\e[32mInstalling dependencies... \e[0m"
-    sudo apt-get install curl libplist-utils -y
-
-    # Download and install the Microsoft repository configuration
-    echo " "
-    echo -e "\e[32mAdding Microsoft repository configuration... \e[0m"
-    curl -o microsoft.list https://packages.microsoft.com/config/$UBUNTU_DISTRO/$UBUNTU_VERSION/$DEFENDER_CHANNEL.list
-
-
-    # Install the repository configuration
-    sudo mv ./microsoft.list /etc/apt/sources.list.d/microsoft-prod.list
-
-    # Install the GPG package and the Microsoft GPG public key
-    echo " "
-    echo -e "\e[32mInstalling GPG and adding Microsoft GPG public key... \e[0m"
-    sudo apt-get install gpg -y
-    curl -sSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg >/dev/null
-
-    # Install the HTTPS driver
-    echo ""
-    echo -e "\e[32mInstalling HTTPS driver... \e[0m"
-    sudo apt-get install apt-transport-https -y
-
-    # Update the repository metadata
-    echo ""
-    echo -e "\e[32mUpdating package repositories... \e[0m"
-    sudo apt-get update
-
-    # Install Microsoft Defender for Endpoint
-    echo ""
-    echo -e "\e[32mInstalling Microsoft Defender for Endpoint... \e[0m"
-    sudo apt-get install mdatp -y
-
-    # Verify that the service is running
-    echo ""
-    echo -e "\e[32mVerifying that the service is running... \e[0m"
-    sudo systemctl status mdatp.service
-
-    # Print message to indicate onboarding is complete
-    echo -e "\e[32mOnboarding of Microsoft Defender for Endpoint is complete. Please verify that the Microsoft Defender for Endpoint service is running. \e[0m"
-    echo ""
-    echo -e "\e[33mGoing back to the menu ... \e[0m"
-    sleep 5
-    ;;
-"3")
     # Update and upgrade system
     echo -e "\e[32mUpdating package repositories... \e[0m"
     sudo apt update
@@ -171,17 +124,27 @@ case $CHOICE in
     echo -e "\e[33mGoing back to the menu ... \e[0m"
     sleep 2
     ;;
-"4")
-    # Display system information
-    echo "Displaying system information..."
-    echo "CPU information:"
-    cat /proc/cpuinfo | grep -i 'model name\|cpu mhz\|cache size\|smt\|core id'
-    echo "Memory information:"
-    free -h
-    echo "Storage information:"
-    df -h
+"3")
+    # Capture system information in variables
+    CPU_INFO=$(cat /proc/cpuinfo | grep -i 'model name\|cpu mhz\|cache size\|smt\|core id')
+    MEM_INFO=$(free -h)
+    STORAGE_INFO=$(df -h)
+
+    # Show information in Zenity dialog
+    zenity --text-info --width=500 --height=400 --title="System Information" --text="
+    Displaying system information...
+
+    CPU information:
+    $CPU_INFO
+
+    Memory information:
+    $MEM_INFO
+
+    Storage information:
+    $STORAGE_INFO
+    "
     ;;
-"5")
+"4")
     # Exit menu
     echo "Exiting menu..."
     MENU_LOOP=false
