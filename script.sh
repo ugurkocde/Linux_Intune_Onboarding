@@ -2,9 +2,9 @@
 
 # Author: Ugur Koc
 # Description: This script is used to install Microsoft Intune and Microsoft Defender for Endpoint on Ubuntu 20.04 and 22.04.
-#             The script is based on the following Microsoft documentation: https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/linux-install-manually?view=o365-worldwide and https://learn.microsoft.com/en-us/mem/intune/user-help/microsoft-intune-app-linux
-#             The script is tested on Ubuntu 20.04 and 22.04.
-#             The script is provided "AS IS" with no warranties.
+# The script is based on the following Microsoft documentation: https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/linux-install-manually?view=o365-worldwide and https://learn.microsoft.com/en-us/mem/intune/user-help/microsoft-intune-app-linux
+# The script is tested on Ubuntu 20.04 and 22.04.
+# The script is provided "AS IS" with no warranties.
 
 # Get Ubuntu version
 UBUNTU_VERSION=$(lsb_release -rs)
@@ -24,8 +24,7 @@ while $MENU_LOOP; do
 # Show menu and get selection
 CHOICE=$(zenity --list --title="Linux2Intune " --text "Select an option:" --column "Options" --column "Menu" \
         "1" "Microsoft Intune" \
-        "2" "Update and Upgrade System" \
-        "3" "Display System Informations")
+        "2" "Update and Upgrade System" )
 
 
 # Exit menu if user cancels
@@ -42,7 +41,8 @@ case $CHOICE in
     INTUNE_CHOICE=$(zenity --list --title="Microsoft Intune" --text "Select an option:" --column "Options" --column "Menu" \
         "1" "Intune - Onboarding (Reboot required)" \
         "2" "Intune - Offboarding" \
-        "3" "Back to Main Menu")
+        "3" "Intune - Update App" \
+        "4" "Back to Main Menu")
 
     # Perform action based on selection
     case $INTUNE_CHOICE in
@@ -105,7 +105,28 @@ case $CHOICE in
         sleep 5
         ;;
 
-    "3")
+"3")
+    # Intune Update
+        echo -e "\e[31mChecking for Intune app updates...\e[0m"
+        if dpkg -s intune-portal &> /dev/null; then
+            sudo apt update
+            if sudo apt list --upgradable 2>/dev/null | grep -q 'intune-portal'; then
+                echo "New version of Intune app is available. Updating..."
+                sudo apt install intune-portal -y
+                echo -e "\e[32mIntune app has been updated.\e[0m"
+            else
+                echo "Intune app is up-to-date."
+            fi
+        else
+            echo "Intune app is not installed."
+        fi
+        echo -e "\e[33mGoing back to the menu ... \e[0m"
+        sleep 2
+        ;;
+
+
+
+    "4")
         # Back to main menu
         echo "Exiting menu..."
         ;;
@@ -124,25 +145,7 @@ case $CHOICE in
     echo -e "\e[33mGoing back to the menu ... \e[0m"
     sleep 2
     ;;
-"3")
-    # Capture system information in variables
-    CPU_INFO=$(cat /proc/cpuinfo | grep -i 'model name\|cpu mhz\|cache size\|smt\|core id')
-    MEM_INFO=$(free -h)
-    STORAGE_INFO=$(df -h)
 
-    # Show information in Zenity dialog
-    zenity --text-info --width=500 --height=400 --title="System Information" --text="Displaying system information...
-
-    CPU information:
-    $CPU_INFO
-
-    Memory information:
-    $MEM_INFO
-
-    Storage information:
-    $STORAGE_INFO"
-
-    ;;
 esac
 
 done
