@@ -23,13 +23,13 @@ OPTIONS=(1 "Microsoft Intune"
     5 "Exit")
 
 # Show menu and get selection
-CHOICE=$(zenity --list --title="Linux2Intune" --text "Select an option:" --column "Options" \
+CHOICE=$(zenity --list --title="Linux2 Intune" --text "Select an option:" --column "Options" \
         "Microsoft Intune" \
         "Defender for Endpoint - Onboarding" \
         "Update and Upgrade System" \
         "Display System Information" \
         "Exit")
-        
+
 # Exit menu if user cancels
 if [[ $? -ne 0 ]]; then
   echo "Exiting menu..."
