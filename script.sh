@@ -1,8 +1,16 @@
+# Author: Ugur Koc
+# Description: This script is used to install Microsoft Intune and Microsoft Defender for Endpoint on Ubuntu 20.04 and 22.04.
+#             The script is based on the following Microsoft documentation: https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/linux-install-manually?view=o365-worldwide and https://learn.microsoft.com/en-us/mem/intune/user-help/microsoft-intune-app-linux
+#             The script is tested on Ubuntu 20.04 and 22.04.
+#             The script is provided "AS IS" with no warranties.
+
+
 #!/bin/bash
 
 # Get Ubuntu version
 UBUNTU_VERSION=$(lsb_release -rs)
 UBUNTU_CODENAME=$(lsb_release -cs)
+UBUNTU_DISTRO=$(lsb_release -is) # Clearly, this is Ubuntu :)
 
 # Verify if Ubuntu version is either 20.04 or 22.04
 if [[ "$UBUNTU_VERSION" != "20.04" ]] && [[ "$UBUNTU_VERSION" != "22.04" ]]; then
@@ -103,14 +111,10 @@ case $CHOICE in
     echo -e "\e[32mInstalling dependencies... \e[0m"
     sudo apt-get install curl libplist-utils -y
 
-    # Identify system information
-    DISTRO=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
-    VERSION=$(lsb_release -rs | cut -f1 -d'.')
-
     # Download and install the Microsoft repository configuration
     echo " "
     echo -e "\e[32mAdding Microsoft repository configuration... \e[0m"
-    curl -o microsoft.list https://packages.microsoft.com/config/$DISTRO/$VERSION/prod.list
+    curl -o microsoft.list https://packages.microsoft.com/config/$UBUNTU_DISTRO/$UBUNTU_VERSION/prod.list
     sudo mv ./microsoft.list /etc/apt/sources.list.d/microsoft-prod.list
 
     # Install the GPG package and the Microsoft GPG public key
