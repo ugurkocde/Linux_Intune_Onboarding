@@ -122,6 +122,9 @@ case $CHOICE in
     echo " "
     echo -e "\e[32mAdding Microsoft repository configuration... \e[0m"
     curl -o microsoft.list https://packages.microsoft.com/config/$UBUNTU_DISTRO/$UBUNTU_VERSION/$DEFENDER_CHANNEL.list
+
+
+    # Install the repository configuration
     sudo mv ./microsoft.list /etc/apt/sources.list.d/microsoft-prod.list
 
     # Install the GPG package and the Microsoft GPG public key
