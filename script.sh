@@ -103,7 +103,7 @@ case $CHOICE in
 
             # Check if Microsoft Intune app has been installed
             if dpkg -s intune-portal &> /dev/null; then
-                echo -e "${YELLOW}Microsoft Intune installed successfully.${NC}"
+                echo -e "Microsoft Intune installed successfully."
                 # Reboot the device
                 echo "Installation complete. Starting Application now."
                 intune-portal
@@ -134,7 +134,7 @@ case $CHOICE in
             sudo rm /etc/apt/sources.list.d/microsoft-ubuntu-$UBUNTU_CODENAME-prod.list
             sudo rm /usr/share/keyrings/microsoft.gpg
 
-            echo -e "${YELLOW}Intune app and local registration data have been removed.${NC}"
+            echo -e "Intune app and local registration data have been removed."
         else
             echo -e "Intune app is not installed."
         fi
@@ -151,12 +151,12 @@ case $CHOICE in
             if sudo apt list --upgradable 2>/dev/null | grep -q 'intune-portal'; then
                 echo "New version of Intune app is available. Updating..."
                 sudo apt install intune-portal -y
-                echo -e "${GREEN}Intune app has been updated.${NC}"
+                echo -e "Intune app has been updated."
             else
-                echo -e "${GREEN}Intune app is up-to-date. ${NC}"
+                echo -e "Intune app is up-to-date."
             fi
         else
-            echo -e "${YELLOW}Intune app is not installed.${NC}"
+            echo -e "Intune app is not installed."
         fi
         echo -e "${YELLOW}Going back to the menu ... ${NC}"
         sleep 2
