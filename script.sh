@@ -22,7 +22,7 @@ MENU_LOOP=true
 while $MENU_LOOP; do
 
 # Show menu and get selection
-CHOICE=$(zenity --list --title="Linux2Intune " --text "Select an option:" --column "Options" --column "Menu" \
+CHOICE=$(zenity --list --title="Linux2Intune " --text "Select an option:" --column "Menu" \
         "1" "Microsoft Intune" \
         "2" "Update and Upgrade System" )
 
@@ -38,7 +38,7 @@ fi
 case $CHOICE in
 "1")
     # Show Microsoft Intune menu options
-    INTUNE_CHOICE=$(zenity --list --title="Microsoft Intune" --text "Select an option:" --column "Options" --column "Menu" \
+    INTUNE_CHOICE=$(zenity --list --title="Microsoft Intune" --text "Select an option:" --column "Menu" \
         "1" "Intune - Onboarding" \
         "2" "Intune - Offboarding" \
         "3" "Intune - Update App" \
