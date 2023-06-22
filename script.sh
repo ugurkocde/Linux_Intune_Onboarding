@@ -80,7 +80,7 @@ case $CHOICE in
             echo "Microsoft Intune is already installed. Skipping installation."
         else
             # Install Microsoft Intune
-            echo "${RED}Starting installation of Microsoft Intune...${NC}"
+            echo -e "${RED}Starting installation of Microsoft Intune...${NC}"
 
             # Install curl and GPG
             echo "Installing dependencies..."
@@ -103,7 +103,7 @@ case $CHOICE in
 
             # Check if Microsoft Intune app has been installed
             if dpkg -s intune-portal &> /dev/null; then
-                echo "${YELLOW}Microsoft Intune installed successfully.${NC}"
+                echo -e "${YELLOW}Microsoft Intune installed successfully.${NC}"
                 # Reboot the device
                 echo "Installation complete. Starting Application now."
                 intune-portal
@@ -136,7 +136,7 @@ case $CHOICE in
 
             echo -e "${YELLOW}Intune app and local registration data have been removed.${NC}"
         else
-            echo "Intune app is not installed."
+            echo -e "Intune app is not installed."
         fi
         echo -e "${YELLOW}Going back to the menu ... ${NC}"
         sleep 5
@@ -153,10 +153,10 @@ case $CHOICE in
                 sudo apt install intune-portal -y
                 echo -e "${GREEN}Intune app has been updated.${NC}"
             else
-                echo "${GREEN}Intune app is up-to-date. ${NC}"
+                echo -e "${GREEN}Intune app is up-to-date. ${NC}"
             fi
         else
-            echo "${YELLOW}Intune app is not installed.${NC}"
+            echo -e "${YELLOW}Intune app is not installed.${NC}"
         fi
         echo -e "${YELLOW}Going back to the menu ... ${NC}"
         sleep 2
