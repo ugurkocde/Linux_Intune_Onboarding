@@ -139,7 +139,7 @@ case $CHOICE in
             echo -e "Intune app is not installed."
         fi
         echo -e "${YELLOW}Going back to the menu ... ${NC}"
-        sleep 5
+        sleep 2
         ;;
 
 
