@@ -36,7 +36,7 @@ fi
 
 # Perform action based on selection
 case $CHOICE in
-"1")
+"Microsoft Intune")
     # Show Microsoft Intune menu options
     INTUNE_CHOICE=$(zenity --list --title="Microsoft Intune" --text "Select an option:" --column "Menu" \
         "Intune - Onboarding" \
@@ -46,7 +46,7 @@ case $CHOICE in
 
     # Perform action based on selection
     case $INTUNE_CHOICE in
-    "1")
+    "Intune - Onboarding")
         # Install Microsoft Intune
         echo "\e[31mStarting installation of Microsoft Intune...\e[0m"
 
@@ -82,7 +82,7 @@ case $CHOICE in
 
 
 
-    "2")
+    "Intune - Offboarding")
         # Intune Offboarding
         if dpkg -s intune-portal &> /dev/null; then
             echo -e "\e[31mUninstalling Intune app...\e[0m"
@@ -110,7 +110,7 @@ case $CHOICE in
         ;;
 
 
-    "3")
+    "Intune - Update App")
         # Intune Update
         echo -e "\e[31mChecking for Intune app updates...\e[0m"
         if dpkg -s intune-portal &> /dev/null; then
@@ -131,14 +131,14 @@ case $CHOICE in
 
 
 
-    "4")
+    "Back to Main Menu")
         # Back to main menu
         echo "Exiting menu..."
         ;;
     esac
     ;;
 
-"2")
+"Update and Upgrade System")
     # Update and upgrade system
     echo -e "\e[32mUpdating package repositories... \e[0m"
     sudo apt update
