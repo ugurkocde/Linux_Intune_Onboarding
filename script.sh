@@ -23,8 +23,8 @@ while $MENU_LOOP; do
 
 # Show menu and get selection
 CHOICE=$(zenity --list --title="Linux2Intune " --text "Select an option:" --column "Menu" \
-        "1" "Microsoft Intune" \
-        "2" "Update and Upgrade System" )
+        "Microsoft Intune" \
+        "Update and Upgrade System" )
 
 
 # Exit menu if user cancels
@@ -39,10 +39,10 @@ case $CHOICE in
 "1")
     # Show Microsoft Intune menu options
     INTUNE_CHOICE=$(zenity --list --title="Microsoft Intune" --text "Select an option:" --column "Menu" \
-        "1" "Intune - Onboarding" \
-        "2" "Intune - Offboarding" \
-        "3" "Intune - Update App" \
-        "4" "Back to Main Menu")
+        "Intune - Onboarding" \
+        "Intune - Offboarding" \
+        "Intune - Update App" \
+        "Back to Main Menu")
 
     # Perform action based on selection
     case $INTUNE_CHOICE in
