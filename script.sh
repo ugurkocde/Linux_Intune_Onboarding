@@ -10,11 +10,39 @@
 UBUNTU_VERSION=$(lsb_release -rs)
 UBUNTU_CODENAME=$(lsb_release -cs)
 
+# Terminal Colors
+RED='\e[31m'
+GREEN='\e[32m'
+YELLOW='\e[33m'
+NC='\e[0m' 
+
+# Check if the script is run with root privileges
+if [ "$EUID" -ne 0 ]
+  then echo "Please run as root"
+  exit
+fi
+
+
 # Verify if Ubuntu version is either 20.04 or 22.04
 if [[ "$UBUNTU_VERSION" != "20.04" ]] && [[ "$UBUNTU_VERSION" != "22.04" ]]; then
     echo "Unsupported Ubuntu version. This script supports Ubuntu 20.04 and 22.04 only."
     exit 1
 fi
+
+# Function to check if Microsoft Intune app is installed
+function is_installed {
+    dpkg -s $1 &> /dev/null
+    return $?
+}
+
+# Function to cleanup temporary files
+function cleanup {
+    echo "Cleaning up temporary files..."
+    rm -f microsoft.gpg
+}
+
+# Trap to ensure cleanup happens on exit
+trap cleanup EXIT
 
 # Set initial value of menu loop variable
 MENU_LOOP=true
@@ -47,36 +75,41 @@ case $CHOICE in
     # Perform action based on selection
     case $INTUNE_CHOICE in
     "Intune - Onboarding")
-        # Install Microsoft Intune
-        echo "\e[31mStarting installation of Microsoft Intune...\e[0m"
-
-        # Install curl and GPG
-        echo "Installing dependencies..."
-        sudo apt install curl gpg -y
-
-        # Download and install the Microsoft package signing key
-        echo "Adding Microsoft package signing key..."
-        curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor >microsoft.gpg
-        sudo install -o root -g root -m 644 microsoft.gpg /usr/share/keyrings/
-        sudo sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/ubuntu/'"$UBUNTU_VERSION"'/prod '$UBUNTU_CODENAME' main" > /etc/apt/sources.list.d/microsoft-ubuntu-'$UBUNTU_CODENAME'-prod.list'
-        sudo rm microsoft.gpg
-
-        # Update package repositories
-        echo "Updating package repositories..."
-        sudo apt update
-
-        # Install the Microsoft Intune app
-        echo "Installing Microsoft Intune..."
-        sudo apt install intune-portal -y
-
-        # Check if Microsoft Intune app has been installed
-        if dpkg -s intune-portal &> /dev/null; then
-            echo "\033[32mMicrosoft Intune installed successfully.\033[0m"
-            # Reboot the device
-            echo "Installation complete. Starting Application now."
-            intune-portal
+        # Check if Microsoft Intune app is already installed
+        if is_installed "intune-portal"; then
+            echo "Microsoft Intune is already installed. Skipping installation."
         else
-            echo "Microsoft Intune installation failed."
+            # Install Microsoft Intune
+            echo "${RED}Starting installation of Microsoft Intune...${NC}"
+
+            # Install curl and GPG
+            echo "Installing dependencies..."
+            sudo apt install curl gpg -y
+
+            # Download and install the Microsoft package signing key
+            echo "Adding Microsoft package signing key..."
+            curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor >microsoft.gpg
+            sudo install -o root -g root -m 644 microsoft.gpg /usr/share/keyrings/
+            sudo sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/ubuntu/'"$UBUNTU_VERSION"'/prod '$UBUNTU_CODENAME' main" > /etc/apt/sources.list.d/microsoft-ubuntu-'$UBUNTU_CODENAME'-prod.list'
+            sudo rm microsoft.gpg
+
+            # Update package repositories
+            echo "Updating package repositories..."
+            sudo apt update
+
+            # Install the Microsoft Intune app
+            echo "Installing Microsoft Intune..."
+            sudo apt install intune-portal -y
+
+            # Check if Microsoft Intune app has been installed
+            if dpkg -s intune-portal &> /dev/null; then
+                echo "${YELLOW}Microsoft Intune installed successfully.${NC}"
+                # Reboot the device
+                echo "Installation complete. Starting Application now."
+                intune-portal
+            else
+                echo "Microsoft Intune installation failed."
+            fi
         fi
         ;;
 
@@ -84,8 +117,8 @@ case $CHOICE in
 
     "Intune - Offboarding")
         # Intune Offboarding
-        if dpkg -s intune-portal &> /dev/null; then
-            echo -e "\e[31mUninstalling Intune app...\e[0m"
+        if is_installed "intune-portal"; then
+            echo -e "${RED}Uninstalling Intune app...${NC}"
             sudo apt remove intune-portal -y
             sudo apt purge intune-portal -y
 
@@ -101,31 +134,31 @@ case $CHOICE in
             sudo rm /etc/apt/sources.list.d/microsoft-ubuntu-$UBUNTU_CODENAME-prod.list
             sudo rm /usr/share/keyrings/microsoft.gpg
 
-            echo -e "\033[32mIntune app and local registration data have been removed.\033[0m"
+            echo -e "${YELLOW}Intune app and local registration data have been removed.${NC}"
         else
             echo "Intune app is not installed."
         fi
-        echo -e "\e[33mGoing back to the menu ... \e[0m"
+        echo -e "${YELLOW}Going back to the menu ... ${NC}"
         sleep 5
         ;;
 
 
     "Intune - Update App")
         # Intune Update
-        echo -e "\e[31mChecking for Intune app updates...\e[0m"
-        if dpkg -s intune-portal &> /dev/null; then
+        echo -e "${RED}Checking for Intune app updates...${NC}"
+        if is_installed "intune-portal"; then
             sudo apt update
             if sudo apt list --upgradable 2>/dev/null | grep -q 'intune-portal'; then
                 echo "New version of Intune app is available. Updating..."
                 sudo apt install intune-portal -y
-                echo -e "\e[32mIntune app has been updated.\e[0m"
+                echo -e "${GREEN}Intune app has been updated.${NC}"
             else
-                echo "\e[32mIntune app is up-to-date. \e[0m"
+                echo "${GREEN}Intune app is up-to-date. ${NC}"
             fi
         else
-            echo "\e[33mIntune app is not installed.\e[0m"
+            echo "${YELLOW}Intune app is not installed.${NC}"
         fi
-        echo -e "\e[33mGoing back to the menu ... \e[0m"
+        echo -e "${YELLOW}Going back to the menu ... ${NC}"
         sleep 2
         ;;
 
@@ -140,16 +173,31 @@ case $CHOICE in
 
 "Update and Upgrade System")
     # Update and upgrade system
-    echo -e "\e[32mUpdating package repositories... \e[0m"
+    echo -e "${GREEN}Updating package repositories... ${NC}"
     sudo apt update
-        echo " "
-    echo -e "\e[32mUpgrading packages...... \e[0m"
+    if [[ $? -ne 0 ]]; then
+        echo -e "${RED}Failed to update package repositories. Please check your internet connection or package repositories.${NC}"
+        echo -e "${YELLOW}Returning to the menu...${NC}"
+        sleep 2
+        continue
+    fi
+    echo " "
+    
+    echo -e "${GREEN}Upgrading packages...... ${NC}"
     sudo apt upgrade -y
-        echo " "
-    echo -e "\e[32mSystem update and upgrade complete. \e[0m"
-    echo -e "\e[33mGoing back to the menu ... \e[0m"
+    if [[ $? -ne 0 ]]; then
+        echo -e "${RED}Failed to upgrade packages. Please check your internet connection or package repositories.${NC}"
+        echo -e "${YELLOW}Returning to the menu...${NC}"
+        sleep 2
+        continue
+    fi
+    echo " "
+    
+    echo -e "${GREEN}System update and upgrade complete. ${NC}"
+    echo -e "${YELLOW}Going back to the menu ... ${NC}"
     sleep 2
     ;;
+
 
 esac
 
