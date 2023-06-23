@@ -18,7 +18,7 @@ if dpkg -s intune-portal &> /dev/null; then
     echo "\033[33mMicrosoft Intune is already installed. Skipping installation.\033[0m"
 else
     # Install Microsoft Intune
-    echo "\e[31mStarting installation of Microsoft Intune...\e[0m"
+    echo "Starting installation of Microsoft Intune..."
 
     # Install curl and GPG
     echo "Installing dependencies..."
@@ -41,7 +41,7 @@ else
 
     # Check if Microsoft Intune app has been installed
     if dpkg -s intune-portal &> /dev/null; then
-        echo "\033[32mMicrosoft Intune installed successfully.\033[0m"
+        echo "Microsoft Intune installed successfully."
         # Start the application
         echo "Installation complete. Starting Application now."
         intune-portal
