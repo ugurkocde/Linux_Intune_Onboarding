@@ -246,7 +246,7 @@ fi
 
         ## Application installation
 
-        sudo apt-get install mdatp
+        sudo apt-get install -y mdatp
 
         ;;
 
