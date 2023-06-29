@@ -76,10 +76,11 @@ CHOICE=$(zenity --list --title="Linux2Intune " --text "Select an option:" --colu
         "Update and Upgrade System" \
         "Show System Information")
 
-        # If Zenity dialog is closed, exit the loop
-    if [ "$?" = "-1" ]; then
-        MENU_LOOP=false
-    fi
+# If Zenity dialog is closed, exit the script
+ if [ "$?" = "-1" ]; then
+     exit 1
+ fi
+
 
 
 # Perform action based on selection
