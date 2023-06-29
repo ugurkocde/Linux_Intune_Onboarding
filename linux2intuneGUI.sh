@@ -50,15 +50,8 @@ function cleanup {
 }
 
 function get_sys_info {
-    # Get system information
-    UNAME="$(uname -a)"
-    MEMORY="$(free -h)"
-    DISK="$(df -h)"
-    CPU="$(lscpu)"
-    NETWORK="$(ip a)"
-
-    # Display system information in a Zenity text-info dialog
-    zenity --text-info --title="System Information" --width=500 --height=400 --filename=<( echo -e "System Information:\n\n$UNAME\n\nMemory Usage:\n$MEMORY\n\nDisk Usage:\n$DISK\n\nCPU Information:\n$CPU\n\nNetwork Information:\n$NETWORK" )
+    # Open a new terminal window and display system information
+    gnome-terminal -- /bin/sh -c 'uname -a; echo; free -h; echo; df -h; echo; lscpu; echo; ip a; exec bash'
 }
 
 # Trap to ensure cleanup happens on exit
@@ -72,7 +65,8 @@ while $MENU_LOOP; do
 # Show menu and get selection
 CHOICE=$(zenity --list --title="Linux2Intune " --text "Select an option:" --column "Menu" \
         "Microsoft Intune" \
-        "Update and Upgrade System")
+        "Update and Upgrade System" \
+        "Show System Information")
 
 # Check if user canceled the dialog box
 if [ $? -eq 1 ]; then
@@ -80,6 +74,7 @@ if [ $? -eq 1 ]; then
     echo "$(date): Exiting the script because the user clicked the cancel button." >> "$LOG_FILE"
     continue
 fi
+
 
 
 # Perform action based on selection
@@ -242,6 +237,11 @@ fi
     sleep 2
     ;;
 
+"Show System Information")
+    # Display system information
+    echo "$(date): Showing system information." >> "$LOG_FILE"
+    get_sys_info
+    ;;
 
 esac
 
