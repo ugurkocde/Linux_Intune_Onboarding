@@ -65,6 +65,7 @@ while $MENU_LOOP; do
 # Show menu and get selection
 CHOICE=$(zenity --list --title="Linux2Intune " --text "Select an option:" --column "Menu" \
         "Microsoft Intune" \
+        "Defender for Endpoint" \
         "Update and Upgrade System" \
         "Show System Information")
 
@@ -205,6 +206,65 @@ fi
     esac
     ;;
 
+"Defender for Endpoint")
+    # Show Microsoft Intune menu options
+INTUNE_CHOICE=$(zenity --list --title="Microsoft Intune" --text "Select an option:" --column "Menu" \
+        "MDE - Onboarding" \
+        "MDE - Offboarding" \
+        "Back to Main Menu")
+
+# Check if user canceled the dialog box
+if [ $? -eq 1 ]; then
+    echo "$(date): Exiting the Microsoft Intune submenu because the user clicked the cancel button." >> "$LOG_FILE"
+    continue
+fi
+
+    # Perform action based on selection
+    case $INTUNE_CHOICE in
+    "MDE - Onboarding")
+        # Install curl if it isn't installed yet:
+        sudo apt-get install curl
+
+        # Install libplist-utils if it isn't installed yet:
+        sudo apt-get install libplist-utils
+        curl -o microsoft.list https://packages.microsoft.com/config/ubuntu/$UBUNTU_VERSION/prod.list
+        
+        # Install the repository configuration:
+        sudo mv ./microsoft.list /etc/apt/sources.list.d/microsoft-prod.list
+        
+        # Install the gpg package if not already installed:
+        sudo apt-get install gpg
+
+        # Install the Microsoft GPG public key:
+        curl -sSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
+
+        # Install the HTTPS driver if not already installed:
+        sudo apt-get install apt-transport-https
+
+        # Update the repository metadata:
+        sudo apt-get update
+
+        ## Application installation
+
+        sudo apt-get install mdatp
+
+        ;;
+
+
+
+    "MDE - Offboarding")
+        # Intune Offboarding
+        
+
+    "Back to Main Menu")
+        # Back to main menu
+        echo "Exiting menu..."
+        echo "$(date): Exiting menu." >> "$LOG_FILE"
+        ;;
+    esac
+    ;;
+
+
 "Update and Upgrade System")
     # Update and upgrade system
     echo -e "${GREEN}Updating package repositories... ${NC}"
@@ -236,6 +296,9 @@ fi
     echo -e "${YELLOW}Going back to the menu ... ${NC}"
     sleep 2
     ;;
+
+
+
 
 "Show System Information")
     # Display system information
