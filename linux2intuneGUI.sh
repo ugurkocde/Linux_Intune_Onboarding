@@ -6,6 +6,9 @@
 # The script is tested on Ubuntu 20.04 and 22.04.
 # The script is provided "AS IS" with no warranties.
 
+# Specify the log file path
+LOG_FILE="/var/log/intune_install.log"
+
 # Get Ubuntu version
 UBUNTU_VERSION=$(lsb_release -rs)
 UBUNTU_CODENAME=$(lsb_release -cs)
@@ -19,13 +22,17 @@ NC='\e[0m'
 # Check if the script is run with root privileges
 if [ "$EUID" -ne 0 ]
   then echo "Please run as root"
+  echo "$(date): Script not run with root privileges." >> "$LOG_FILE"
   exit
 fi
 
+# Start of the script
+echo "$(date): Starting the script." >> "$LOG_FILE"
 
 # Verify if Ubuntu version is either 20.04 or 22.04
 if [[ "$UBUNTU_VERSION" != "20.04" ]] && [[ "$UBUNTU_VERSION" != "22.04" ]]; then
     echo "Unsupported Ubuntu version. This script supports Ubuntu 20.04 and 22.04 only."
+    echo "$(date): Unsupported Ubuntu version - $UBUNTU_VERSION" >> "$LOG_FILE"
     exit 1
 fi
 
@@ -39,6 +46,20 @@ function is_installed {
 function cleanup {
     echo "Cleaning up temporary files..."
     rm -f microsoft.gpg
+    echo "$(date): Cleaned up temporary files." >> "$LOG_FILE"
+}
+
+# Function to get system information
+function get_sys_info {
+    # Get system information
+    UNAME="$(uname -a)"
+    MEMORY="$(free -h)"
+    DISK="$(df -h)"
+    CPU="$(lscpu)"
+    NETWORK="$(ip a)"
+
+    # Display system information in a Zenity info dialog
+    zenity --info --title="System Information" --text="System Information:\n\n$UNAME\n\nMemory Usage:\n$MEMORY\n\nDisk Usage:\n$DISK\n\nCPU Information:\n$CPU\n\nNetwork Information:\n$NETWORK"
 }
 
 # Trap to ensure cleanup happens on exit
@@ -52,15 +73,8 @@ while $MENU_LOOP; do
 # Show menu and get selection
 CHOICE=$(zenity --list --title="Linux2Intune " --text "Select an option:" --column "Menu" \
         "Microsoft Intune" \
-        "Update and Upgrade System" )
-
-
-# Exit menu if user cancels
-if [[ $? -ne 0 ]]; then
-  echo "Exiting menu..."
-  MENU_LOOP=false
-  break
-fi
+        "Update and Upgrade System" \
+        "Show System Information")
 
 # Perform action based on selection
 case $CHOICE in
@@ -78,9 +92,11 @@ case $CHOICE in
         # Check if Microsoft Intune app is already installed
         if is_installed "intune-portal"; then
             echo "Microsoft Intune is already installed. Skipping installation."
+            echo "$(date): Microsoft Intune is already installed." >> "$LOG_FILE"
         else
             # Install Microsoft Intune
             echo -e "${RED}Starting installation of Microsoft Intune...${NC}"
+            echo "$(date): Starting installation of Microsoft Intune." >> "$LOG_FILE"
 
             # Install curl and GPG
             echo "Installing dependencies..."
@@ -104,11 +120,13 @@ case $CHOICE in
             # Check if Microsoft Intune app has been installed
             if dpkg -s intune-portal &> /dev/null; then
                 echo -e "Microsoft Intune installed successfully."
+                echo "$(date): Microsoft Intune installed successfully." >> "$LOG_FILE"
                 # Reboot the device
                 echo "Installation complete. Starting Application now."
                 intune-portal
             else
                 echo "Microsoft Intune installation failed."
+                echo "$(date): Microsoft Intune installation failed." >> "$LOG_FILE"
             fi
         fi
         ;;
@@ -119,6 +137,7 @@ case $CHOICE in
         # Intune Offboarding
         if is_installed "intune-portal"; then
             echo -e "${RED}Uninstalling Intune app...${NC}"
+            echo "$(date): Uninstalling Intune app." >> "$LOG_FILE"
             sudo apt remove intune-portal -y
             sudo apt purge intune-portal -y
 
@@ -135,8 +154,10 @@ case $CHOICE in
             sudo rm /usr/share/keyrings/microsoft.gpg
 
             echo -e "Intune app and local registration data have been removed."
+            echo "$(date): Intune app and local registration data have been removed." >> "$LOG_FILE"
         else
             echo -e "Intune app is not installed."
+            echo "$(date): Intune app is not installed." >> "$LOG_FILE"
         fi
         echo -e "${YELLOW}Going back to the menu ... ${NC}"
         sleep 2
@@ -146,17 +167,22 @@ case $CHOICE in
     "Intune - Update App")
         # Intune Update
         echo -e "${RED}Checking for Intune app updates...${NC}"
+        echo "$(date): Checking for Intune app updates." >> "$LOG_FILE"
         if is_installed "intune-portal"; then
             sudo apt update
             if sudo apt list --upgradable 2>/dev/null | grep -q 'intune-portal'; then
                 echo "New version of Intune app is available. Updating..."
+                echo "$(date): New version of Intune app is available. Updating." >> "$LOG_FILE"
                 sudo apt install intune-portal -y
                 echo -e "Intune app has been updated."
+                echo "$(date): Intune app has been updated." >> "$LOG_FILE"
             else
                 echo -e "Intune app is up-to-date."
+                echo "$(date): Intune app is up-to-date." >> "$LOG_FILE"
             fi
         else
             echo -e "Intune app is not installed."
+            echo "$(date): Intune app is not installed." >> "$LOG_FILE"
         fi
         echo -e "${YELLOW}Going back to the menu ... ${NC}"
         sleep 2
@@ -167,6 +193,7 @@ case $CHOICE in
     "Back to Main Menu")
         # Back to main menu
         echo "Exiting menu..."
+        echo "$(date): Exiting menu." >> "$LOG_FILE"
         ;;
     esac
     ;;
@@ -174,9 +201,11 @@ case $CHOICE in
 "Update and Upgrade System")
     # Update and upgrade system
     echo -e "${GREEN}Updating package repositories... ${NC}"
+    echo "$(date): Updating package repositories." >> "$LOG_FILE"
     sudo apt update
     if [[ $? -ne 0 ]]; then
         echo -e "${RED}Failed to update package repositories. Please check your internet connection or package repositories.${NC}"
+        echo "$(date): Failed to update package repositories." >> "$LOG_FILE"
         echo -e "${YELLOW}Returning to the menu...${NC}"
         sleep 2
         continue
@@ -184,9 +213,11 @@ case $CHOICE in
     echo " "
     
     echo -e "${GREEN}Upgrading packages...... ${NC}"
+    echo "$(date): Upgrading packages." >> "$LOG_FILE"
     sudo apt upgrade -y
     if [[ $? -ne 0 ]]; then
         echo -e "${RED}Failed to upgrade packages. Please check your internet connection or package repositories.${NC}"
+        echo "$(date): Failed to upgrade packages." >> "$LOG_FILE"
         echo -e "${YELLOW}Returning to the menu...${NC}"
         sleep 2
         continue
@@ -194,10 +225,16 @@ case $CHOICE in
     echo " "
     
     echo -e "${GREEN}System update and upgrade complete. ${NC}"
+    echo "$(date): System update and upgrade complete." >> "$LOG_FILE"
     echo -e "${YELLOW}Going back to the menu ... ${NC}"
     sleep 2
     ;;
 
+
+"Show System Information")
+    # Display system information
+    get_sys_info
+    ;;
 
 esac
 
