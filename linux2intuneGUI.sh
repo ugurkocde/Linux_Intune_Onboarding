@@ -49,19 +49,6 @@ function cleanup {
     echo "$(date): Cleaned up temporary files." >> "$LOG_FILE"
 }
 
-# Function to get system information
-function get_sys_info {
-    # Get system information
-    UNAME="$(uname -a)"
-    MEMORY="$(free -h)"
-    DISK="$(df -h)"
-    CPU="$(lscpu)"
-    NETWORK="$(ip a)"
-
-    # Display system information in a new terminal window
-    gnome-terminal -- bash -c "echo 'System Information:\n\n$UNAME\n\nMemory Usage:\n$MEMORY\n\nDisk Usage:\n$DISK\n\nCPU Information:\n$CPU\n\nNetwork Information:\n$NETWORK; exec bash"
-}
-
 # Trap to ensure cleanup happens on exit
 trap cleanup EXIT
 
@@ -73,15 +60,7 @@ while $MENU_LOOP; do
 # Show menu and get selection
 CHOICE=$(zenity --list --title="Linux2Intune " --text "Select an option:" --column "Menu" \
         "Microsoft Intune" \
-        "Update and Upgrade System" \
-        "Show System Information")
-
-# If Zenity dialog is closed, exit the script
- if [ "$?" = "-1" ]; then
-     exit 1
- fi
-
-
+        "Update and Upgrade System" )
 
 # Perform action based on selection
 case $CHOICE in
@@ -92,7 +71,6 @@ case $CHOICE in
         "Intune - Offboarding" \
         "Intune - Update App" \
         "Back to Main Menu")
-        
 
     # Perform action based on selection
     case $INTUNE_CHOICE in
@@ -239,12 +217,6 @@ case $CHOICE in
     ;;
 
 
-"Show System Information")
-    # Display system information
-    get_sys_info
-    ;;
-
 esac
-
 
 done
