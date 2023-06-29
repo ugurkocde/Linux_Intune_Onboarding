@@ -7,7 +7,7 @@
 # The script is provided "AS IS" with no warranties.
 
 # Specify the log file path
-LOG_FILE="/var/log/intune_install.log"
+LOG_FILE="/var/log/linux2intune.log"
 
 # Get Ubuntu version
 UBUNTU_VERSION=$(lsb_release -rs)
