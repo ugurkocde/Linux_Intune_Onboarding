@@ -244,5 +244,6 @@ case $CHOICE in
     ;;
 
 esac
+;;
 
 done
