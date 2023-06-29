@@ -254,7 +254,7 @@ fi
 
     "MDE - Offboarding")
         # Intune Offboarding
-        
+        ;;
 
     "Back to Main Menu")
         # Back to main menu
