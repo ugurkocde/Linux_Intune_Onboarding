@@ -5,7 +5,7 @@
 # Updated: Added logging functionality
 
 # Specify the log file path
-LOG_FILE="/var/log/intune_install.log"
+LOG_FILE="/var/log/linux2intune.log"
 
 # Start of the script
 echo "$(date): Starting the script." >> "$LOG_FILE"
