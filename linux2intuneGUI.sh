@@ -49,6 +49,18 @@ function cleanup {
     echo "$(date): Cleaned up temporary files." >> "$LOG_FILE"
 }
 
+function get_sys_info {
+    # Get system information
+    UNAME="$(uname -a)"
+    MEMORY="$(free -h)"
+    DISK="$(df -h)"
+    CPU="$(lscpu)"
+    NETWORK="$(ip a)"
+
+    # Display system information in a Zenity text-info dialog
+    zenity --text-info --title="System Information" --width=500 --height=400 --filename=<( echo -e "System Information:\n\n$UNAME\n\nMemory Usage:\n$MEMORY\n\nDisk Usage:\n$DISK\n\nCPU Information:\n$CPU\n\nNetwork Information:\n$NETWORK" )
+}
+
 # Trap to ensure cleanup happens on exit
 trap cleanup EXIT
 
@@ -60,17 +72,31 @@ while $MENU_LOOP; do
 # Show menu and get selection
 CHOICE=$(zenity --list --title="Linux2Intune " --text "Select an option:" --column "Menu" \
         "Microsoft Intune" \
-        "Update and Upgrade System" )
+        "Update and Upgrade System")
+
+# Check if user canceled the dialog box
+if [ $? -eq 1 ]; then
+    MENU_LOOP=false
+    echo "$(date): Exiting the script because the user clicked the cancel button." >> "$LOG_FILE"
+    continue
+fi
+
 
 # Perform action based on selection
 case $CHOICE in
 "Microsoft Intune")
     # Show Microsoft Intune menu options
-    INTUNE_CHOICE=$(zenity --list --title="Microsoft Intune" --text "Select an option:" --column "Menu" \
+INTUNE_CHOICE=$(zenity --list --title="Microsoft Intune" --text "Select an option:" --column "Menu" \
         "Intune - Onboarding" \
         "Intune - Offboarding" \
         "Intune - Update App" \
         "Back to Main Menu")
+
+# Check if user canceled the dialog box
+if [ $? -eq 1 ]; then
+    echo "$(date): Exiting the Microsoft Intune submenu because the user clicked the cancel button." >> "$LOG_FILE"
+    continue
+fi
 
     # Perform action based on selection
     case $INTUNE_CHOICE in
