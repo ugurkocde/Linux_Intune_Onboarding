@@ -2,6 +2,13 @@
 
 # Author: Ugur Koc
 # Description: This script is used to install Microsoft Intune on Ubuntu 20.04 and 22.04.
+# Updated: Added logging functionality
+
+# Specify the log file path
+LOG_FILE="/var/log/intune_install.log"
+
+# Start of the script
+echo "$(date): Starting the script." >> "$LOG_FILE"
 
 # Get Ubuntu version
 UBUNTU_VERSION=$(lsb_release -rs)
@@ -10,15 +17,18 @@ UBUNTU_CODENAME=$(lsb_release -cs)
 # Verify if Ubuntu version is either 20.04 or 22.04
 if [[ "$UBUNTU_VERSION" != "20.04" ]] && [[ "$UBUNTU_VERSION" != "22.04" ]]; then
     echo "Unsupported Ubuntu version. This script supports Ubuntu 20.04 and 22.04 only."
+    echo "$(date): Unsupported Ubuntu version - $UBUNTU_VERSION" >> "$LOG_FILE"
     exit 1
 fi
 
 # Check if Microsoft Intune app is already installed
 if dpkg -s intune-portal &> /dev/null; then
     echo "\033[33mMicrosoft Intune is already installed. Skipping installation.\033[0m"
+    echo "$(date): Microsoft Intune is already installed." >> "$LOG_FILE"
 else
     # Install Microsoft Intune
     echo "Starting installation of Microsoft Intune..."
+    echo "$(date): Starting installation of Microsoft Intune." >> "$LOG_FILE"
 
     # Install curl and GPG
     echo "Installing dependencies..."
@@ -42,10 +52,15 @@ else
     # Check if Microsoft Intune app has been installed
     if dpkg -s intune-portal &> /dev/null; then
         echo "Microsoft Intune installed successfully."
+        echo "$(date): Microsoft Intune installed successfully." >> "$LOG_FILE"
         # Start the application
         echo "Installation complete. Starting Application now."
         intune-portal
     else
         echo "Microsoft Intune installation failed."
+        echo "$(date): Microsoft Intune installation failed." >> "$LOG_FILE"
     fi
 fi
+
+# End of the script
+echo "$(date): Script finished." >> "$LOG_FILE"
