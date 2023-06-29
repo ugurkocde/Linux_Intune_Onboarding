@@ -58,8 +58,8 @@ function get_sys_info {
     CPU="$(lscpu)"
     NETWORK="$(ip a)"
 
-    # Display system information in a Zenity info dialog
-    zenity --info --title="System Information" --text="System Information:\n\n$UNAME\n\nMemory Usage:\n$MEMORY\n\nDisk Usage:\n$DISK\n\nCPU Information:\n$CPU\n\nNetwork Information:\n$NETWORK"
+    # Display system information in a new terminal window
+    gnome-terminal -- bash -c "echo 'System Information:\n\n$UNAME\n\nMemory Usage:\n$MEMORY\n\nDisk Usage:\n$DISK\n\nCPU Information:\n$CPU\n\nNetwork Information:\n$NETWORK; exec bash"
 }
 
 # Trap to ensure cleanup happens on exit
@@ -76,6 +76,12 @@ CHOICE=$(zenity --list --title="Linux2Intune " --text "Select an option:" --colu
         "Update and Upgrade System" \
         "Show System Information")
 
+        # If Zenity dialog is closed, exit the loop
+    if [ "$?" = "-1" ]; then
+        MENU_LOOP=false
+    fi
+
+
 # Perform action based on selection
 case $CHOICE in
 "Microsoft Intune")
@@ -85,6 +91,7 @@ case $CHOICE in
         "Intune - Offboarding" \
         "Intune - Update App" \
         "Back to Main Menu")
+        
 
     # Perform action based on selection
     case $INTUNE_CHOICE in
