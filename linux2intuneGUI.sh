@@ -223,7 +223,7 @@ fi
     case $INTUNE_CHOICE in
     "MDE - Onboarding")
        
-       curl -s https://raw.githubusercontent.com/microsoft/mdatp-xplat/master/linux/installation/mde_installer.sh | sudo bash -s -- --install --channel prod --min_req -y
+       curl -s https://raw.githubusercontent.com/microsoft/mdatp-xplat/master/linux/installation/mde_installer.sh | sudo bash -s -- --install --channel prod --onboard $(zenity --file-selection) --min_req --output  -y
 
 
         ;;
