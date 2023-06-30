@@ -237,7 +237,7 @@ INTUNE_CHOICE=$(zenity --list --title="Microsoft Intune" --text "Select an optio
 
     "MDE - Offboarding")
 
-        OFFBOARD_FILE=$(zenity --file-selection)
+        # OFFBOARD_FILE=$(zenity --file-selection)
         curl -s https://raw.githubusercontent.com/microsoft/mdatp-xplat/master/linux/installation/mde_installer.sh | sudo bash -s -- --remove -y
 
         ;;
@@ -287,7 +287,6 @@ INTUNE_CHOICE=$(zenity --list --title="Microsoft Intune" --text "Select an optio
     else
         echo -e "${RED}Update and upgrade cancelled by the user.${NC}"
         echo "$(date): Update and upgrade cancelled by the user." >> "$LOG_FILE"
-        zenity --info --text="Update and upgrade cancelled by the user."
         sleep 2
     fi
     ;;
