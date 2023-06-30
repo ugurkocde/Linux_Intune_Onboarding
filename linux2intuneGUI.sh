@@ -291,7 +291,7 @@ INTUNE_CHOICE=$(zenity --list --title="Microsoft Intune" --text "Select an optio
         sleep 2
     fi
 
-    ;;
+
 
 
 
