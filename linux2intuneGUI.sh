@@ -213,27 +213,32 @@ INTUNE_CHOICE=$(zenity --list --title="Microsoft Intune" --text "Select an optio
         "MDE - Offboarding" \
         "Back to Main Menu")
 
-# Check if user canceled the dialog box
-if [ $? -eq 1 ]; then
-    echo "$(date): Exiting the Microsoft Intune submenu because the user clicked the cancel button." >> "$LOG_FILE"
-    continue
-fi
+    # Check if user canceled the dialog box
+    if [ $? -eq 1 ]; then
+        echo "$(date): Exiting the Microsoft Intune submenu because the user clicked the cancel button." >> "$LOG_FILE"
+        continue
+    fi
 
     # Perform action based on selection
     case $INTUNE_CHOICE in
     "MDE - Onboarding")
        
-ONBOARD_FILE=$(zenity --file-selection)
-curl -s https://raw.githubusercontent.com/microsoft/mdatp-xplat/master/linux/installation/mde_installer.sh | sudo bash -s -- --install --channel prod --onboard $ONBOARD_FILE --min_req -y
-
+    ONBOARD_FILE=$(zenity --file-selection)
+    TAG=$(zenity --entry --text="Enter tag or leave empty for no tag")
+    if [ -z "$TAG" ]
+    then
+        curl -s https://raw.githubusercontent.com/microsoft/mdatp-xplat/master/linux/installation/mde_installer.sh | sudo bash -s -- --install --channel prod --onboard $ONBOARD_FILE --min_req -y
+    else
+        curl -s https://raw.githubusercontent.com/microsoft/mdatp-xplat/master/linux/installation/mde_installer.sh | sudo bash -s -- --install --channel prod --onboard $ONBOARD_FILE --tag GROUP $TAG --min_req -y
+    fi
 
         ;;
 
 
-
     "MDE - Offboarding")
 
-        curl -s https://raw.githubusercontent.com/microsoft/mdatp-xplat/master/linux/installation/mde_installer.sh | sudo bash -s -- --remove -y
+        OFFBOARD_FILE=$(zenity --file-selection)
+        curl -s https://raw.githubusercontent.com/microsoft/mdatp-xplat/master/linux/installation/mde_installer.sh | sudo bash -s -- --remove --offboard $OFFBOARD_FILE -y
 
         ;;
 
