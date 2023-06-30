@@ -224,7 +224,7 @@ INTUNE_CHOICE=$(zenity --list --title="Microsoft Intune" --text "Select an optio
     "MDE - Onboarding")
        
     ONBOARD_FILE=$(zenity --file-selection)
-    TAG=$(zenity --entry --text="Enter tag or leave empty for no tag")
+    TAG=$(zenity --entry --text="Enter device tag or leave empty for no tag")
     if [ -z "$TAG" ]
     then
         curl -s https://raw.githubusercontent.com/microsoft/mdatp-xplat/master/linux/installation/mde_installer.sh | sudo bash -s -- --install --channel prod --onboard $ONBOARD_FILE --min_req -y
