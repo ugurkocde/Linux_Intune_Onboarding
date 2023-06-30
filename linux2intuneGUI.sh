@@ -232,7 +232,9 @@ curl -s https://raw.githubusercontent.com/microsoft/mdatp-xplat/master/linux/ins
 
 
     "MDE - Offboarding")
-        # Intune Offboarding
+
+        curl -s https://raw.githubusercontent.com/microsoft/mdatp-xplat/master/linux/installation/mde_installer.sh | sudo bash -s -- --remove -y
+
         ;;
 
     "Back to Main Menu")
