@@ -283,14 +283,14 @@ INTUNE_CHOICE=$(zenity --list --title="Microsoft Intune" --text "Select an optio
     echo "$(date): System update and upgrade complete." >> "$LOG_FILE"
     zenity --info --text="System update and upgrade complete."
     sleep 2
-    ;;
+
     else
         echo -e "${RED}Update and upgrade cancelled by the user.${NC}"
         echo "$(date): Update and upgrade cancelled by the user." >> "$LOG_FILE"
         zenity --info --text="Update and upgrade cancelled by the user."
         sleep 2
     fi
-
+    ;;
 
 
 
