@@ -238,7 +238,7 @@ INTUNE_CHOICE=$(zenity --list --title="Microsoft Intune" --text "Select an optio
     "MDE - Offboarding")
 
         OFFBOARD_FILE=$(zenity --file-selection)
-        curl -s https://raw.githubusercontent.com/microsoft/mdatp-xplat/master/linux/installation/mde_installer.sh | sudo bash -s -- --remove --offboard $OFFBOARD_FILE -y
+        curl -s https://raw.githubusercontent.com/microsoft/mdatp-xplat/master/linux/installation/mde_installer.sh | sudo bash -s -- --remove --offboard -y
 
         ;;
 
