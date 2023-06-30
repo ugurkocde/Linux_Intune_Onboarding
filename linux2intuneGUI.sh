@@ -222,31 +222,9 @@ fi
     # Perform action based on selection
     case $INTUNE_CHOICE in
     "MDE - Onboarding")
-        # Install curl if it isn't installed yet:
-        sudo apt-get install curl
+       
+       curl -s https://raw.githubusercontent.com/microsoft/mdatp-xplat/master/linux/installation/mde_installer.sh | sudo bash -s -- --install --channel prod --min_req -y
 
-        # Install libplist-utils if it isn't installed yet:
-        sudo apt-get install libplist-utils
-        curl -o microsoft.list https://packages.microsoft.com/config/ubuntu/$UBUNTU_VERSION/prod.list
-        
-        # Install the repository configuration:
-        sudo mv ./microsoft.list /etc/apt/sources.list.d/microsoft-prod.list
-        
-        # Install the gpg package if not already installed:
-        sudo apt-get install gpg
-
-        # Install the Microsoft GPG public key:
-        curl -sSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
-
-        # Install the HTTPS driver if not already installed:
-        sudo apt-get install apt-transport-https
-
-        # Update the repository metadata:
-        sudo apt-get update
-
-        ## Application installation
-
-        sudo apt-get install -y mdatp
 
         ;;
 
