@@ -238,7 +238,7 @@ INTUNE_CHOICE=$(zenity --list --title="Microsoft Intune" --text "Select an optio
     "MDE - Offboarding")
 
         OFFBOARD_FILE=$(zenity --file-selection)
-        curl -s https://raw.githubusercontent.com/microsoft/mdatp-xplat/master/linux/installation/mde_installer.sh | sudo bash -s -- --remove --offboard -y
+        curl -s https://raw.githubusercontent.com/microsoft/mdatp-xplat/master/linux/installation/mde_installer.sh | sudo bash -s -- --remove -y
 
         ;;
 
@@ -253,13 +253,15 @@ INTUNE_CHOICE=$(zenity --list --title="Microsoft Intune" --text "Select an optio
 
 "Update and Upgrade System")
     # Update and upgrade system
+    if zenity --question --text="You are about to update and upgrade your system. Do you want to proceed?"; then
+
     echo -e "${GREEN}Updating package repositories... ${NC}"
     echo "$(date): Updating package repositories." >> "$LOG_FILE"
     sudo apt update
     if [[ $? -ne 0 ]]; then
         echo -e "${RED}Failed to update package repositories. Please check your internet connection or package repositories.${NC}"
         echo "$(date): Failed to update package repositories." >> "$LOG_FILE"
-        echo -e "${YELLOW}Returning to the menu...${NC}"
+        zenity --error --text="Failed to update package repositories. Please check your internet connection or package repositories."
         sleep 2
         continue
     fi
@@ -271,7 +273,7 @@ INTUNE_CHOICE=$(zenity --list --title="Microsoft Intune" --text "Select an optio
     if [[ $? -ne 0 ]]; then
         echo -e "${RED}Failed to upgrade packages. Please check your internet connection or package repositories.${NC}"
         echo "$(date): Failed to upgrade packages." >> "$LOG_FILE"
-        echo -e "${YELLOW}Returning to the menu...${NC}"
+        zenity --error --text="Failed to upgrade packages. Please check your internet connection or package repositories."
         sleep 2
         continue
     fi
@@ -279,8 +281,16 @@ INTUNE_CHOICE=$(zenity --list --title="Microsoft Intune" --text "Select an optio
     
     echo -e "${GREEN}System update and upgrade complete. ${NC}"
     echo "$(date): System update and upgrade complete." >> "$LOG_FILE"
-    echo -e "${YELLOW}Going back to the menu ... ${NC}"
+    zenity --info --text="System update and upgrade complete."
     sleep 2
+    ;;
+    else
+        echo -e "${RED}Update and upgrade cancelled by the user.${NC}"
+        echo "$(date): Update and upgrade cancelled by the user." >> "$LOG_FILE"
+        zenity --info --text="Update and upgrade cancelled by the user."
+        sleep 2
+    fi
+
     ;;
 
 
